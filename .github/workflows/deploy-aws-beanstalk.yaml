@@ -37,9 +37,9 @@ jobs:
       with:
         aws_access_key: ${{ secrets.AWS_BEAN_ACCESS_KEY }}
         aws_secret_key: ${{ secrets.AWS_BEAN_SECRET_KEY }}
-        application_name: My-React-App
-        environment_name: My-React-App-Env
-        # existing_bucket_name: --
+        application_name: react-app-d
+        environment_name: Reactappd-env
+        existing_bucket_name: elasticbeanstalk-ap-south-1-037983576349
         version_label: ${{github.run_number}}--${{ github.sha }}  
         region: ap-south-1
         deployment_package: deploy.zip
