@@ -1,0 +1,56 @@
+---
+#
+#   This workflow will deploy react app to aws instance using BeanStalk
+#   Author: Akshay
+#   Date-Created:11-01-2023 | Date-Last-Modified: 11-01-2023
+#
+
+name: Deploy AWS BeanStalk
+on:
+ # push:
+ #  branches:
+ #  - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    #- name: Generate deployment package
+    # run: zip -r deploy.zip . -x '*.git*'
+
+    - name: Docker login
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Docker Build
+      run: docker build -t akmv30/react-demo -f Dockerfile.dev .
+
+    - name: Docker run
+      run: docker run -e CI=true akmv30/react-demo npm test
+     
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
+ 
+    - name: Deploy to Elastic BeanStalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_BEAN_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_BEAN_SECRET_KEY }}
+        application_name: My-React-App
+        environment_name: My-React-App-Env
+        # existing_bucket_name: --
+        version_label: ${{github.run_number}}--${{ github.sha }}  
+        region: ap-south-1
+        deployment_package: deploy.zip
+        
+   
+    
+ 
+  
+        
+        
+        
